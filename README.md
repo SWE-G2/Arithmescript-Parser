@@ -8,3 +8,8 @@ cd pkg/Arithmescript-Parser/
 go install
 go test
 ```
+
+### Compile for WASM
+```
+make compile-wasm
+```

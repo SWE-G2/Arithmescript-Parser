@@ -1,5 +1,5 @@
 # WASM Binaries
-# *.wasm
+*.wasm
 
 # Logs
 logs
@@ -18,3 +18,5 @@ logs
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Output directory
+bin/
