@@ -54,7 +54,7 @@ type Token struct {
 // 	return parsedTokens, nil
 // }
 
-func parseString(asMarkup string, grammar *Grammar) (s string, err error) {
+func ParseString(asMarkup string, grammar *Grammar) (s string, err error) {
 	words := strings.Split(asMarkup, " ")
 	for _, word := range words {
 		for _, rule := range grammar.rules {

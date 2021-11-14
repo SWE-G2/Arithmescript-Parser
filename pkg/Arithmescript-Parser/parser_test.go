@@ -14,7 +14,7 @@ func TestReplace(t *testing.T) {
 	// grammar.rules = append(grammar.rules, &GrammarToken{"\root", "of", ")", "hi", ",", "bye"})
 
 	want := "hi body bye hi body part1# part2 bye"
-	msg, err := parseString(s, grammar)
+	msg, err := ParseString(s, grammar)
 	if want != msg || err != nil {
 		t.Fatalf(`parseString(s, grammar) = %q, %v, want match for %#q, nil`, msg, err, want)
 	}
