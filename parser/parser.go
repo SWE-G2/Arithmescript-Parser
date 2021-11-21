@@ -36,15 +36,17 @@ func PickGrammarForLine(asMarkup string, grammar *Grammar) (t *GrammarToken) {
 func ParseExpression(asMarkup string, grammar *Grammar) (parsed Token, err error)  {
 		asMarkup = strings.TrimSpace(asMarkup)
 		asMarkup = strings.Trim(asMarkup, "{}()[]")
+		asMarkup = strings.ToLower(asMarkup)
 		
 		grammarToken := PickGrammarForLine(asMarkup, grammar)
+		
+		parsed.body = asMarkup
 
 		if grammarToken == nil {
-			parsed.body = asMarkup
 			return
 		}
-
 		parsed.grammar = grammarToken
+		
 		if grammarToken.decomposer == nil {
 			return
 		}
@@ -65,10 +67,7 @@ func ParseExpression(asMarkup string, grammar *Grammar) (parsed Token, err error
 func ParseMultiline(asMarkup string, grammar *Grammar) (parsed []Token, err error) {
 	lines := strings.Split(asMarkup, ";")
 	for _, line := range lines {
-		go func() {
-			
-		}()
-		ParseExpression(line, grammar)
+		go ParseExpression(line, grammar)
 	}
 
 	return

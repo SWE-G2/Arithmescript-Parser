@@ -35,7 +35,7 @@ func TestPickGrammarForLine(t *testing.T) {
 		} 
 	})
 	t.Run("undefined token", func(t *testing.T) { 	
-		if PickGrammarForLine("owo", grammar) == nil {
+		if PickGrammarForLine("owo", grammar) != nil {
 			t.Fail()
 		} 
 	})
@@ -60,9 +60,9 @@ func TestParseExpression(t *testing.T) {
 			t.Fail()
 		} 
 	})
-	t.Run("times with ASGRAMMAR", func(t *testing.T) {
+	t.Run("anyword surrounded by stuff", func(t *testing.T) {
 		tok, err := ParseExpression("anyword", grammar)
-		if err != nil || tok.grammar == grammar.rules[0] {
+		if err != nil || tok.grammar != grammar.rules[0] {
 			t.Fail()
 		} 
 	})
