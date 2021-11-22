@@ -4,7 +4,8 @@ A library for converting Arithmescript markup into LaTeX.
 ## Tests
 To run the tests for the parser library...
 ```
-cd pkg/Arithmescript-Parser/
+git clone https://github.com/SWE-G2/Arithmescript-Parser
+cd Arithmescript-Parser/parser
 go install
 go test
 ```
