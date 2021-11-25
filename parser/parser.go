@@ -8,12 +8,11 @@ import (
 
 type GrammarToken struct {
 	keywords   regexp.Regexp // The regex use to match a line to this GT. Use regexp.MustCompile to define this.
-	definition string // A string that gets-- Wait, I don't remember why I added this, conversions will go in a new module.
 	decomposer func(asMarkup string) ([]string) // Returns a list of strings to be converted to tokens.
 }
 
 type Grammar struct {
-	rules []*GrammarToken
+	rules map[string]*GrammarToken
 }
 
 type Token struct {
