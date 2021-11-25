@@ -3,6 +3,7 @@ package asparser
 import (
 	"regexp"
 	"strings"
+	"sync"
 )
 
 type GrammarToken struct {
@@ -65,10 +66,25 @@ func ParseExpression(asMarkup string, grammar *Grammar) (parsed Token, err error
 
 // Parses multiple lines of AS markup
 func ParseMultiline(asMarkup string, grammar *Grammar) (parsed []Token, err error) {
-	lines := strings.Split(asMarkup, ";")
-	for _, line := range lines {
-		go ParseExpression(line, grammar)
-	}
+	lineSpliter := regexp.MustCompile(";|\n")
+	
+	lines := lineSpliter.Split(asMarkup, -1)
+	
+	wg := sync.WaitGroup{}
+	wg.Add(len(lines))
 
+	parsed = make([]Token, len(lines))
+	for lineNum, line := range lines {
+		go func (lineNum int, line string) {
+			defer wg.Done()
+			tok, err := ParseExpression(line, grammar)
+			if err != nil {
+				return 
+			}
+			parsed[lineNum] = tok
+			
+		}(lineNum, line)
+	}
+	wg.Wait()
 	return
 }

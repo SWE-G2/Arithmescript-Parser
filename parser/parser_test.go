@@ -1,6 +1,7 @@
 package asparser
 
 import (
+	"fmt"
 	"regexp"
 	"testing"
 )
@@ -72,14 +73,24 @@ func TestMultilineParse(t *testing.T) {
 		
 	t.Run("times with ASGRAMMAR and semicolons", func(t *testing.T) {
 		toks, err := ParseMultiline("a times b; c times d", ASGRAMMAR)
-		if err != nil || !(len(toks) == 2 && toks[0].grammar == ASGRAMMAR.rules[1] && toks[1].grammar == ASGRAMMAR.rules[1]) {
+		if err != nil || !(len(toks) == 2 && toks[0].grammar == ASGRAMMAR.rules[0] && toks[1].grammar == ASGRAMMAR.rules[1]) {
 			t.Fail()
 		} 
 	})
 
 	t.Run("times with ASGRAMMAR and newlines", func(t *testing.T) {
 		toks, err := ParseMultiline("a times b\n c times d", ASGRAMMAR)
-		if err != nil || !(len(toks) == 2 && toks[0].grammar == ASGRAMMAR.rules[1] && toks[1].grammar == ASGRAMMAR.rules[1]) {
+		if err != nil || !(len(toks) == 2 && toks[0].grammar == ASGRAMMAR.rules[0] && toks[1].grammar == ASGRAMMAR.rules[1]) {
+			t.Fail()
+		} 
+	})
+	var longString string
+	for i := 0; i < 3000; i++ {
+		longString += fmt.Sprintf("%v times 1/%v\n", i, i)
+	}
+	t.Run("times with ASGRAMMAR and newlines with lots of lines", func(t *testing.T) {
+		toks, err := ParseMultiline(longString, ASGRAMMAR)
+		if err != nil || !(len(toks) == 3000 && toks[1372].grammar == ASGRAMMAR.rules[1] && toks[290].grammar == ASGRAMMAR.rules[1]) {
 			t.Fail()
 		} 
 	})
