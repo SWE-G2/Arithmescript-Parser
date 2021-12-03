@@ -1,11 +1,19 @@
 package asparser
 
 type ConversionTable struct {
-	table map[string]string
+	table map[string]DictionaryToken
 }
 
-func(ct ConversionTable) Convert (token Token, args ...string) (out string) {
-	// target := ct.table[token.grammar]
-	// out = fmt.Sprintf(, args)
+type DictionaryToken struct {
+	idName string // Should match the key in the map
+	tokenName string // The grammar token this corrisponds with
+	converter func(token Token) string // Returns the converted string
+}
+
+func(ct ConversionTable) Convert (token Token) (result string) {
+	result += ct.table[token.grammar.idName].converter(token)
+	for _, t := range token.content {
+		result += ct.Convert(*t)
+	}
 	return
 }
