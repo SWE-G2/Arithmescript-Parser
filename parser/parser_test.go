@@ -68,9 +68,10 @@ func TestParseExpression(t *testing.T) {
 	})
 	t.Run("nested tokens with ASGRAMMAR", func(t *testing.T) {
 		tok, err := ParseExpression("(a times b) times (c times d)", ASGRAMMAR)
-		if err != nil || tok.grammar != ASGRAMMAR.rules["times"] || tok.content[0].grammar != ASGRAMMAR.rules["times"] {
-			t.Fail()
-		}
+		if err != nil { t.Fail() }
+		if tok.grammar != ASGRAMMAR.rules["block"] { t.Fail() }
+		if tok.content[0].body != "a times b" { t.Fail() }
+		if tok.content[1].body != "c times d"  { t.Fail() }
 	})
 }
 
