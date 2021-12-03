@@ -1,20 +1,19 @@
 package asparser
 
 import (
+	"regexp"
 	"strings"
+	"sync"
 )
 
 type GrammarToken struct {
-	asStart        string
-	asDelimiter    string
-	asEnd          string
-	latexStart     string
-	latexDelimiter string
-	latexEnd       string
+	idName string // Should match the name in the map
+	keywords   regexp.Regexp                  // The regex use to match a line to this GT. Use regexp.MustCompile to define this.
+	decomposer func(self *GrammarToken, asMarkup string) []string // Returns a list of strings to be converted to tokens.
 }
 
 type Grammar struct {
-	rules []*GrammarToken
+	rules map[string]*GrammarToken
 }
 
 type Token struct {
@@ -23,58 +22,69 @@ type Token struct {
 	grammar *GrammarToken
 }
 
-// Maybe we should drop tokenization? I don't think we actually need it unless we 
-// make more than one target language.
 
-// func parseStringByWords(asMarkup string, grammar *Grammar) (parsedTokens []Token, error) {
-// 	words := strings.Split(asMarkup, " ")
-// 	currToken := Token
-// 	hasFoundStart := false
-// 	hasFoundEnd := false
-// 	hasFoundBody := false
-// 	hasFoundDelimiter := false
-// 	for wordIndex, word := words {
-
-// 		for _, rule := range grammar.rules {
-// 			if strings.Contains(word, rule.asStart) {
-// 				Token.grammar = &rule
-// 				parsedTokens = append(parsedTokens, t)
-// 				continue
-
-// 			}
-// 			if strings.Contains(word, rule.asDelimiter) {
-
-// 				continue
-// 			}
-// 		}
-// 		if hasFoundStart && hasFoundEnd && !hasFoundDelimiter {
-// 			currToken = words[wordIndex - 1]
-// 		}
-// 	}
-// 	return parsedTokens, nil
-// }
-
-func ParseString(asMarkup string, grammar *Grammar) (s string, err error) {
-	words := strings.Split(asMarkup, " ")
-	for _, word := range words {
-		for _, rule := range grammar.rules {
-			if strings.Contains(word, rule.asStart) {
-				s = s + rule.latexStart + " "
-				continue
-			}
-
-			if strings.Contains(word, rule.asDelimiter) {
-				s = s + strings.TrimRight(word, rule.asDelimiter) + rule.latexDelimiter + " "
-				continue
-			}
-
-			if strings.Contains(word, rule.asEnd) {
-				s = s + rule.latexEnd + " "
-				continue
-			}
-			s += word + " "
+func PickGrammarForLine(asMarkup string, grammar *Grammar) (t *GrammarToken) {
+	for _, grammarToken := range grammar.rules {
+		regexResult := grammarToken.keywords.Find([]byte(asMarkup))
+		if len(regexResult) != 0 {
+			return grammarToken
 		}
 	}
-	s = strings.Trim(s, " ")
+	return nil
+}
+
+// Parses a single line of AS markup
+func ParseExpression(asMarkup string, grammar *Grammar) (parsed Token, err error) {
+	asMarkup = strings.TrimSpace(asMarkup)
+	// asMarkup = strings.Trim(asMarkup, "{}()[]") // Replaced with order of operations
+	asMarkup = strings.ToLower(asMarkup)
+
+	grammarToken := PickGrammarForLine(asMarkup, grammar)
+
+	parsed.body = asMarkup
+
+	if grammarToken == nil {
+		return
+	}
+	parsed.grammar = grammarToken
+
+	if grammarToken.decomposer == nil {
+		return
+	}
+	for _, s := range grammarToken.decomposer(grammarToken, asMarkup) {
+		child, childError := ParseExpression(s, grammar)
+
+		if childError != nil {
+			err = childError
+			return
+		}
+
+		parsed.content = append(parsed.content, &child)
+	}
+	return
+}
+
+// Parses multiple lines of AS markup
+func ParseMultiline(asMarkup string, grammar *Grammar) (parsed []Token, err error) {
+	lineSpliter := regexp.MustCompile(";|\n")
+
+	lines := lineSpliter.Split(asMarkup, -1)
+
+	wg := sync.WaitGroup{}
+	wg.Add(len(lines))
+
+	parsed = make([]Token, len(lines))
+	for lineNum, line := range lines {
+		go func(lineNum int, line string) {
+			defer wg.Done()
+			tok, err := ParseExpression(line, grammar)
+			if err != nil {
+				return
+			}
+			parsed[lineNum] = tok
+
+		}(lineNum, line)
+	}
+	wg.Wait()
 	return
 }
