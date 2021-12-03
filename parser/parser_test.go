@@ -102,6 +102,4 @@ func TestMultilineParse(t *testing.T) {
 	})
 }
 
-func printTree(token Token) {
-	println(token.grammar)
-}
+

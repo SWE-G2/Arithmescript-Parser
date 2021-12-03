@@ -22,6 +22,9 @@ type Token struct {
 	grammar *GrammarToken
 }
 
+func (token Token) String() string {
+	return sPrintTree(token, 0)
+}
 
 func PickGrammarForLine(asMarkup string, grammar *Grammar) (t *GrammarToken) {
 	for _, grammarToken := range grammar.rules {
@@ -86,5 +89,16 @@ func ParseMultiline(asMarkup string, grammar *Grammar) (parsed []Token, err erro
 		}(lineNum, line)
 	}
 	wg.Wait()
+	return
+}
+
+func sPrintTree(token Token, depth int) (result string){
+	for i := 0; i < depth; i++ {
+		result += "\t"
+	}
+	result += token.body  + "\n"
+	for _, t := range token.content {
+		result += sPrintTree(*t, depth + 1)
+	}
 	return
 }
