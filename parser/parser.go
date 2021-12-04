@@ -49,10 +49,10 @@ func ParseExpression(asMarkup string, grammar *Grammar) (parsed Token, err error
 	if grammarToken == nil {
 		return
 	}
+	parsed.body = ""
 	parsed.grammar = grammarToken
 
 	if grammarToken.decomposer == nil {
-		parsed.body = ""
 		return
 	}
 	for _, s := range grammarToken.decomposer(grammarToken, asMarkup) {
@@ -96,6 +96,9 @@ func ParseMultiline(asMarkup string, grammar *Grammar) (parsed []Token, err erro
 func sPrintTree(token Token, depth int) (result string){
 	for i := 0; i < depth; i++ {
 		result += "\t"
+	}
+	if token.grammar != nil {
+		result += token.grammar.idName
 	}
 	result += token.body  + "\n"
 	for _, t := range token.content {

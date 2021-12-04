@@ -9,11 +9,11 @@ var ASGRAMMAR *Grammar = &Grammar{
 	rules: map[string]*GrammarToken{
 		"block": {
 			idName: "block",
-			keywords: *regexp.MustCompile(`\((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*\)`), // TODO: Replace with regex that can find more than two deep
+			keywords: *regexp.MustCompile(`\((?:[^)(]+)*\)`), // Should NOT be recusive! 
 			decomposer: func(self *GrammarToken, asMarkup string) (result []string) {
 				result = self.keywords.FindAllString(asMarkup, -1)
 				for i, s := range result {
-					result[i] = strings.Trim(s, "{}()[]")
+					result[i] = strings.Trim(s, "()")
 				}
 				return
 			},

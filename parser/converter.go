@@ -25,11 +25,12 @@ func(ct ConversionTable) Convert (token Token) (result string, err error) {
 		result = ct.table[token.grammar.idName].converter(token, ct)
 		return
 	}
+	result = ""
 	
 	for _, t := range token.content { 
 		s, err := ct.Convert(*t)
 		if err != nil {
-			return "", err
+			return result, err
 		}
 		result += s
 	}

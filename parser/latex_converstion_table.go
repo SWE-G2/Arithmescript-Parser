@@ -11,6 +11,13 @@ var LatexConversionTable *ConversionTable = &ConversionTable{
 		"block": {
 			idName: "block",
 			tokenName: "block",
+			converter: func(token Token, ct ConversionTable) string {
+				s, err := ct.Convert(*token.content[0])
+				if err != nil {
+					log.Println("failed to contents of parens block")
+				}
+				return fmt.Sprintf("(%s)", s)
+			},
 		},
 		"times": {
 			idName: "times",
@@ -24,7 +31,7 @@ var LatexConversionTable *ConversionTable = &ConversionTable{
 				if err != nil {
 					log.Println("failed to 'b' of times")
 				}
-				return fmt.Sprintf("(%s \\times %s)", a, b)
+				return fmt.Sprintf("%s \\times %s", a, b)
 			},
 		},
 		"root": {
@@ -44,7 +51,7 @@ var LatexConversionTable *ConversionTable = &ConversionTable{
 				if err != nil {
 					log.Println("failed to parse operand of root")
 				}
-				return fmt.Sprintf("\\root[%s](%s)", base, operand)
+				return fmt.Sprintf("\\sqrt[%s]{%s}", base, operand)
 			},
 		},
 	},

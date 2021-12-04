@@ -1,6 +1,7 @@
 package asparser
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -8,6 +9,7 @@ func TestConverter(t *testing.T) {
 	t.Run("nested tokens with ASGRAMMAR", func(t *testing.T) {
 		toks, err := ParseMultiline("(a times b) times (c times d)", ASGRAMMAR)
 		if err != nil { t.Fail() }
+		fmt.Println(toks)
 		lat, err := LatexConversionTable.Convert(toks[0])
 		println(lat)
 		if err != nil { t.Fail() }
@@ -16,7 +18,7 @@ func TestConverter(t *testing.T) {
 
 	t.Run("nested tokens with ASGRAMMAR #2", func(t *testing.T) {
 		toks, err := ParseMultiline("8th root 256 times 7; root of 16; ", ASGRAMMAR)
-		// fmt.Println(toks)
+		fmt.Println(toks)
 		if err != nil { t.Fail() }
 		lat, err := LatexConversionTable.ConvertMultiline(toks)
 		println(lat)
