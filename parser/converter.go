@@ -11,7 +11,10 @@ type DictionaryToken struct {
 }
 
 func(ct ConversionTable) Convert (token Token) (result string) {
-	result += ct.table[token.grammar.idName].converter(token)
+	if ct.table[token.grammar.idName].converter != nil {
+		result += ct.table[token.grammar.idName].converter(token)	
+	}
+	
 	for _, t := range token.content {
 		result += ct.Convert(*t)
 	}
