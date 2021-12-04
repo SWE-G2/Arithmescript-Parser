@@ -17,8 +17,8 @@
             const go = new Go();
             WebAssembly.instantiateStreaming(fetch("asparser.wasm"), go.importObject).then((result) => {
                 go.run(result.instance);
-                sayHello("WASM");
-                sayHello("Golang");
+                console.log();
+                
             });
 
 
