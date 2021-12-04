@@ -15,7 +15,7 @@
             }
 
             const go = new Go();
-            WebAssembly.instantiateStreaming(fetch("asparser.wasm"), go.importObject).then((result) => {
+            WebAssembly.instantiateStreaming(fetch("../bin/asparser.wasm"), go.importObject).then((result) => {
                 go.run(result.instance);
                 console.log();
                 
