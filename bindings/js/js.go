@@ -25,6 +25,10 @@ func sayHello(self js.Value, args []js.Value) interface{} {
 
 // Convert AS to Latex
 func ConvertASToLatex(self js.Value, args []js.Value) interface{} {
+	if len(args) != 1 {
+		js.Global().Get("console").Call("error", "Invalid number of arguments")
+		return nil
+	}
 	tokens, err := asp.ParseMultiline(args[0].String(), asp.ASGRAMMAR)
 	if err != nil {
 		return err
