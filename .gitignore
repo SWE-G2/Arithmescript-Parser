@@ -1,5 +1,5 @@
 # WASM Binaries
-*.wasm
+# *.wasm
 
 # Logs
 logs
@@ -19,4 +19,4 @@ logs
 *.out
 
 # Output directory
-bin/
+# bin/

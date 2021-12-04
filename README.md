@@ -14,3 +14,18 @@ go test
 ```
 make compile-wasm
 ```
+
+### Misc
+
+If your working with the JS bindings, add this to your VSCode workspace settings:
+```json
+"go.toolsEnvVars": {
+
+    "GOARCH": "wasm",
+    "GOOS": "js",
+},
+"go.testEnvVars": {
+    "GOARCH": "wasm",
+    "GOOS": "js",
+}
+```
