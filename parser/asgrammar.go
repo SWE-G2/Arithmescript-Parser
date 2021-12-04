@@ -24,13 +24,18 @@ var ASGRAMMAR *Grammar = &Grammar{
 			decomposer: func(self *GrammarToken, asMarkup string) (result []string) {
 				splitAtRoot := strings.SplitN(asMarkup, "root", 2)
 				splitAtOf := strings.SplitN(splitAtRoot[len(splitAtRoot)-1], "of", 2)
+				
 				if len(splitAtRoot) == 2 {
+					splitAtRoot[0] = strings.TrimSpace(splitAtRoot[0])
 					splitAtRoot[0] = strings.TrimSuffix(splitAtRoot[0], "th")
 					splitAtRoot[0] = strings.TrimSuffix(splitAtRoot[0], "st")
 					splitAtRoot[0] = strings.TrimSuffix(splitAtRoot[0], "nd")
 					result = append(result, splitAtRoot[0])
 				}
-				result = append(result, splitAtOf[len(splitAtOf)-1])
+				last := len(splitAtOf)-1
+				splitAtOf[last] = strings.TrimSpace(splitAtOf[last])
+				splitAtOf[last] = strings.TrimPrefix(splitAtOf[last], "of")
+				result = append(result, splitAtOf[last])
 				return
 		}},
 		"times": {
