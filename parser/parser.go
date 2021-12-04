@@ -52,6 +52,7 @@ func ParseExpression(asMarkup string, grammar *Grammar) (parsed Token, err error
 	parsed.grammar = grammarToken
 
 	if grammarToken.decomposer == nil {
+		parsed.body = ""
 		return
 	}
 	for _, s := range grammarToken.decomposer(grammarToken, asMarkup) {

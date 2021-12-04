@@ -30,15 +30,19 @@ func ConvertASToLatex(self js.Value, args []js.Value) interface{} {
 		return err
 	}
 	var latexString string
-	for _, t := range tokens {
-		latexString += asp.LatexConversionTable.Convert(t)
+	s, err := asp.LatexConversionTable.ConvertMultiline(tokens)
+	if err != nil {
+		return err
 	}
+	latexString = s
+
 	return latexString
 }
 
 func main() {  
     fmt.Println("Go Web Assembly")
     // js.Global().Set("ParseMultilineASG", js.FuncOf(ParseMultilineASG))
+    js.Global().Set("sayHello", js.FuncOf(sayHello))
     js.Global().Set("ConvertASToLatex", js.FuncOf(ConvertASToLatex))
 	<-make(chan bool)	// Stops program from exiting, 
 						// makes go wait for this channel to exit 
