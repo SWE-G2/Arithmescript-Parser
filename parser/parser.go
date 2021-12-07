@@ -13,6 +13,7 @@ type GrammarToken struct {
 }
 
 type Grammar struct {
+	blockDefinition *GrammarToken
 	rules map[string]*GrammarToken
 }
 

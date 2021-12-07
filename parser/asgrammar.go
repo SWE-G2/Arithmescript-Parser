@@ -5,9 +5,7 @@ import (
 	"strings"
 )
 
-var ASGRAMMAR *Grammar = &Grammar{
-	rules: map[string]*GrammarToken{
-		"block": {
+var asgBlock = &GrammarToken{
 			idName: "block",
 			keywords: *regexp.MustCompile(`\((?:[^)(]+)*\)`), // Should NOT be recusive! 
 			decomposer: func(self *GrammarToken, asMarkup string) (result []string) {
@@ -17,7 +15,11 @@ var ASGRAMMAR *Grammar = &Grammar{
 				}
 				return
 			},
-		},
+		}
+
+var ASGRAMMAR *Grammar = &Grammar{
+	blockDefinition: asgBlock,
+	rules: map[string]*GrammarToken{
 		"root": {
 			idName: "root",
 			keywords: *regexp.MustCompile("root"), 
@@ -42,7 +44,26 @@ var ASGRAMMAR *Grammar = &Grammar{
 			idName: "times",
 			keywords: *regexp.MustCompile("times"), 
 			decomposer: func(self *GrammarToken, asMarkup string) []string {
-			return strings.Split(asMarkup, "times")
-		}},
-
+				return strings.Split(skipBlocks(asMarkup), "times")
+			},
+		},
+		"block": asgBlock,
 	}}
+
+func splitSkippingBlocks(asMarkup string, splitBy string) (string) {
+	
+	return asMarkup
+}
+
+func splitSkippingBlocksN(asMarkup string) (string) {
+	return asMarkup
+}
+	
+	
+func skipBlocks(asMarkup string) (string) {
+	blocks := asgBlock.decomposer(asgBlock, asMarkup)
+	for _, b := range blocks {
+		asMarkup = strings.ReplaceAll(asMarkup, b, "")
+	}
+	return asMarkup
+}
